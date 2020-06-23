@@ -42,13 +42,17 @@ print (ID)
 x = []
 for f in sulphate_files:
 	df = pd.read_csv(f)  
-	#print (df.head(5))
+	print (df.head(5))
 	print (len(sulphate_files))
 	sitesA = sites.copy()
 	#df['Measurement'].values[df['Measurement'] <=0.1] = np.nan
 
 	mean_A= df["Measurement"].mean() # to compute annual mean
-	mean_MAM = df["Measurement"].mean() # to compute mean MAM
+	start_date = df["Start Date"]
+	print (start_date)
+	end_date = df["End Date"]
+	print (end_date)
+	mean_MAM = df["Measurement"].mean(start_date => 15/02/2016 and end_date <= 15/06/2016) # to compute mean MAM
 	mean_JJA = df["Measurement"].mean() # to compute mean JJA
 	mean_SON = df["Measurement"].mean() # to compute mean SON
 	mean_DJF = df["Measurement"].mean() # to compute mean DJF
@@ -73,7 +77,7 @@ id_mean = pd.DataFrame(x)
 df_merge_col = pd.merge(sites, id_mean, on='UK-AIR_ID', how ='right')
 print (df_merge_col.head(5))
 
-#####export csv file having site wise annual mean information if needed 
+"""#####export csv file having site wise annual mean information if needed 
 #df_merge_col.to_csv(r'/home/a/ap744/scratch_alok/python_work/sulphate_annual_mean.csv')
 
 #drop extra information from pandas dataframe
@@ -268,4 +272,4 @@ for axis in ['top','bottom','left','right']:
 #plt.show()
 plt.subplots_adjust(left=0.05, bottom=0.07, right=0.98, top=0.97, wspace=0.20, hspace=0.05);
 plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAscatter.png',bbox_inches='tight')
-plt.show()
+plt.show()"""
