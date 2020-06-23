@@ -47,9 +47,16 @@ for f in sulphate_files:
 	sitesA = sites.copy()
 	#df['Measurement'].values[df['Measurement'] <=0.1] = np.nan
 
-	mean_A= df["Measurement"].mean()
+	mean_A= df["Measurement"].mean() # to compute annual mean
+	mean_MAM = df["Measurement"].mean() # to compute mean MAM
+	mean_JJA = df["Measurement"].mean() # to compute mean JJA
+	mean_SON = df["Measurement"].mean() # to compute mean SON
+	mean_DJF = df["Measurement"].mean() # to compute mean DJF
 	print (mean_A, f[87:95])
+	
 	sitesA["sulphate_annual_mean"] = mean_A
+	sitesA["sulphate_MAM_mean"] = mean_MAM
+	sitesA["sulphate_DJF_mean"] = mean_DJF
 	#print (sitesA.head(10))
 	
 	x.append(
