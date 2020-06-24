@@ -176,7 +176,7 @@ GC_surface_sulfate_son = sum(GC_surface_sulfate[8:11])/len(GC_surface_sulfate[8:
 GC_surface_sulfate_jf = sum(GC_surface_sulfate[0:2])/len(GC_surface_sulfate[0:2])
 print (GC_surface_sulfate_jf, 'jf_shape')
 
-GC_surface_sulfate_d = GC_surface_sulfate[0]
+GC_surface_sulfate_d = GC_surface_sulfate[11]
 print (GC_surface_sulfate_d, 'd_shape')
 
 #mean of JF and Dec using np.array --> creating problem in plotting
