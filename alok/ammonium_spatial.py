@@ -144,10 +144,15 @@ print (sites_ammonium_AM, sites_name, sites_lat, sites_lon)
 
 
 #os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016")
-os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
-
-Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
 Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
+StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+
 Species = Species[:] 
 Aerosols = Aerosols[:]
 #print(Aerosols, Species, sep = "\n")
@@ -176,7 +181,7 @@ GC_surface_ammonium_son = sum(GC_surface_ammonium[8:11])/len(GC_surface_ammonium
 GC_surface_ammonium_jf = sum(GC_surface_ammonium[0:2])/len(GC_surface_ammonium[0:2])
 print (GC_surface_ammonium_jf, 'jf_shape')
 
-GC_surface_ammonium_d = GC_surface_ammonium[0]
+GC_surface_ammonium_d = GC_surface_ammonium[11]
 print (GC_surface_ammonium_d, 'd_shape')
 
 #mean of JF and Dec using np.array --> creating problem in plotting
@@ -238,17 +243,23 @@ print (sites_ammonium_AM.shape)
 # Compare DERFA and GEOS-Chem:
 
 #Normalized mean bias
-nmb_Annual=100.*((sites_ammonium_AM)- np.mean(gc_data_ammonium_annual))/(gc_data_ammonium_annual)
-nmb_mam=100.*((sites_ammonium_mam)- np.mean(gc_data_ammonium_mam))/(gc_data_ammonium_mam)
-nmb_jja=100.*((sites_ammonium_jja)- np.mean(gc_data_ammonium_jja))/(gc_data_ammonium_jja)
-nmb_son=100.*((sites_ammonium_son)- np.mean(gc_data_ammonium_son))/(gc_data_ammonium_son)
-nmb_djf=100.*((sites_ammonium_djf)- np.mean(gc_data_ammonium_djf))/(gc_data_ammonium_djf)
+#nmb_Annual=100.*((np.nanmean(sites_ammonium_AM))- np.nanmean(gc_data_ammonium_annual))/np.nanmean(gc_data_ammonium_annual)
+#nmb_mam=100.*((np.nanmean(sites_ammonium_mam))- np.nanmean(gc_data_ammonium_mam))/np.nanmean(gc_data_ammonium_mam)
+#nmb_jja=100.*((np.nanmean(sites_ammonium_jja))- np.nanmean(gc_data_ammonium_jja))/np.nanmean(gc_data_ammonium_jja)
+#nmb_son=100.*((np.nanmean(sites_ammonium_son))- np.nanmean(gc_data_ammonium_son))/np.nanmean(gc_data_ammonium_son)
+#nmb_djf=100.*((np.nanmean(sites_ammonium_djf))- np.nanmean(gc_data_ammonium_djf))/np.nanmean(gc_data_ammonium_djf)
+
+nmb_Annual=100.*((np.nanmean(gc_data_ammonium_annual))- np.nanmean(sites_ammonium_AM))/np.nanmean(sites_ammonium_AM)
+nmb_mam=100.*((np.nanmean(gc_data_ammonium_mam))- np.nanmean(sites_ammonium_mam))/np.nanmean(sites_ammonium_mam)
+nmb_jja=100.*((np.nanmean(gc_data_ammonium_jja))- np.nanmean(sites_ammonium_jja))/np.nanmean(sites_ammonium_jja)
+nmb_son=100.*((np.nanmean(gc_data_ammonium_son))- np.nanmean(sites_ammonium_son))/np.nanmean(sites_ammonium_son)
+nmb_djf=100.*((np.nanmean(gc_data_ammonium_djf))- np.nanmean(sites_ammonium_djf))/np.nanmean(sites_ammonium_djf)
+
 print(' DEFRA NMB_Annual= ', nmb_Annual)
 print(' DEFRA NMB_mam = ', nmb_mam)
 print(' DEFRA NMB_jja = ', nmb_jja)
 print(' DEFRA NMB_son = ', nmb_son)
 print(' DEFRA NMB_djf = ', nmb_djf)
-
 #correlation
 correlate_Annual=stats.pearsonr(gc_data_ammonium_annual,sites_ammonium_AM)
 
@@ -266,7 +277,8 @@ nas_djf = np.logical_or(np.isnan(gc_data_ammonium_djf), np.isnan(sites_ammonium_
 correlate_djf = stats.pearsonr(gc_data_ammonium_djf[~nas_djf],sites_ammonium_djf[~nas_djf])
 
 print('Correlation = ',correlate_Annual)
-#Regression ~ bootstrap is not working
+
+#Regression ~ bootstrap 
 #regres=rma(gc_data_ammonium,sites_ammonium_AM,1000)
 #print('slope: ',regres[0])   
 #print('Intercept: ',regres[1])
@@ -281,9 +293,6 @@ Europe_map = ShapelyFeature(Reader(Europe_shape).geometries(),
 print ('Shapefile_read')
 title_list = 'DEFRA and GEOS-Chem Particulate ammonium'
 title_list1 = 'Spatial Map DEFRA and GEOS-Chem Particulate ammonium'
-
-
-
 
 #fig,ax = plt.subplots(2,1, figsize=(11,11))
 fig1 = plt.figure(facecolor='White',figsize=[11,11]);pad= 1.1;
@@ -310,12 +319,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate ammonium (Annual)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_ammonium ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -348,12 +357,14 @@ ax.set_title('DEFRA and GEOS-Chem Particulate ammonium (mam)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.85,0.9), xytext=(0, pad),
+
+ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB mam= {0:.2f}'.format(nmb_mam),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_ammonium ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -389,12 +400,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate ammonium (jja)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_jja= {0:.2f}'.format(correlate_jja[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_jja = {0:.2f}'.format(correlate_jja[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB jja= {0:.2f}'.format(nmb_jja),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_ammonium ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -427,12 +438,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate ammonium (son)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB son = {0:.2f}'.format(nmb_son),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_ammonium ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -466,12 +477,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate ammonium (djf)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB djf = {0:.2f}'.format(nmb_djf),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_ammonium ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -480,4 +491,3 @@ colorbar.ax.xaxis.label.set_size(10)
 plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonium_GEOS-Chem_DEFRAspatial_djf.png',bbox_inches='tight')
 
 plt.show()
-

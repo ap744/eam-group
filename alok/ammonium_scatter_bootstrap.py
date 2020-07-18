@@ -15,7 +15,7 @@ from cartopy.feature import ShapelyFeature
 import matplotlib.cm as cm
 import glob
 from scipy import stats
-#from bootstrap import rma
+from bootstrap import rma
 from scipy.stats import gaussian_kde
 
 #Use todays date to plot files - good practice to save files name with date
@@ -143,11 +143,15 @@ print (sites_ammonium_AM, sites_name, sites_lat, sites_lon)
 #####Reading GEOS-Chem files ################
 
 
-#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016")
-os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
-
-Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
 Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
+StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+
 Species = Species[:] 
 Aerosols = Aerosols[:]
 #print(Aerosols, Species, sep = "\n")
@@ -250,7 +254,7 @@ print(' DEFRA NMB_son = ', nmb_son)
 print(' DEFRA NMB_djf = ', nmb_djf)
 
 #correlation
-correlate_Annual=stats.pearsonr(gc_data_ammonium_annual,sites_ammonium_AM)
+correlate_annual=stats.pearsonr(gc_data_ammonium_annual,sites_ammonium_AM)
 
 # dropping nan values and compute correlation
 nas_mam = np.logical_or(np.isnan(gc_data_ammonium_mam), np.isnan(sites_ammonium_mam))
@@ -264,28 +268,8 @@ correlate_son = stats.pearsonr(gc_data_ammonium_son[~nas_son],sites_ammonium_son
 
 nas_djf = np.logical_or(np.isnan(gc_data_ammonium_djf), np.isnan(sites_ammonium_djf))
 correlate_djf = stats.pearsonr(gc_data_ammonium_djf[~nas_djf],sites_ammonium_djf[~nas_djf])
+print('Correlation = ',correlate_annual)
 
-print('Correlation Annual = ',correlate_Annual)
-
-#Regression ~ bootstrap is not working
-#regres=rma(gc_data_ammonium,sites_ammonium_AM,1000)
-#print('slope: ',regres[0])   
-#print('Intercept: ',regres[1])
-#print('slope error: ',regres[2])   
-#print('Intercept error: ',regres[3])
-
-
-
-
-
-#scatter plot 
-
-title_list = 'DEFRA and GEOS-Chem Particulate ammonium'
-title_list1 = 'DEFRA & GEOS-Chem ammonium Annual'
-title_list2 = 'DEFRA & GEOS-Chem ammonium MAM'
-title_list3 = 'DEFRA & GEOS-Chem ammonium JJA'
-title_list4 = 'DEFRA & GEOS-Chem ammonium SON'
-title_list5 = 'DEFRA & GEOS-Chem ammonium DJF'
 
 x11 = gc_data_ammonium_annual
 y11 = sites_ammonium_AM
@@ -338,31 +322,53 @@ y5 = x55b[1]
 
 
 
-# Stat Calculation
-x1y1 = np.vstack([x1,y1])
-z1 = gaussian_kde(x1y1)(x1y1)
-slope1, intercept1, r_value1, p_value1, std_err1 = stats.linregress(x1,y1)  
-line1 = slope1*x1+intercept1
+#Regression ~ using bootstrap
+#ind=np.where((gc_data_ammonium_annual!=0)&(sites_ammonium_AM!=0))
+#print (ind)
+regres_annual=rma(x1,y1,(len(x1)),1000)
+print('slope annual: ',regres_annual[0])   
+print('Intercept annual: ',regres_annual[1])
+print('slope error annual: ',regres_annual[2])   
+print('Intercept error annual: ',regres_annual[3])
 
-x2y2 = np.vstack([x2,y2])
-z2 = gaussian_kde(x2y2)(x2y2)
-slope2, intercept2, r_value2, p_value2, std_err2 = stats.linregress(x2,y2)  
-line2 = slope2*x2+intercept2
 
-x3y3 = np.vstack([x3,y3])
-z3 = gaussian_kde(x3y3)(x3y3)
-slope3, intercept3, r_value3, p_value3, std_err3 = stats.linregress(x3,y3)  
-line3 = slope3*x3+intercept3
+regres_mam=rma(x2,y2,(len(x2)),1000)
+print('slope mam: ',regres_mam[0])   
+print('Intercept mam: ',regres_mam[1])
+print('slope error mam: ',regres_mam[2])   
+print('Intercept error mam: ',regres_mam[3])
 
-x4y4 = np.vstack([x4,y4])
-z4 = gaussian_kde(x4y4)(x4y4)
-slope4, intercept4, r_value4, p_value4, std_err4 = stats.linregress(x4,y4)  
-line4 = slope4*x4+intercept4
+regres_jja=rma(x3,y3,(len(x3)),1000)
+print('slope jja: ',regres_jja[0])   
+print('Intercept jja: ',regres_jja[1])
+print('slope error jja: ',regres_jja[2])   
+print('Intercept error jja: ',regres_jja[3])
 
-x5y5 = np.vstack([x5,y5])
-z5 = gaussian_kde(x5y5)(x5y5)
-slope5, intercept5, r_value5, p_value5, std_err5 = stats.linregress(x5,y5)  
-line5 = slope5*x5+intercept5
+
+regres_son=rma(x4,y4,(len(x4)),1000)
+print('slope son: ',regres_son[0])   
+print('Intercept son: ',regres_son[1])
+print('slope error son: ',regres_son[2])   
+print('Intercept error son: ',regres_son[3])
+
+
+
+regres_djf=rma(x5,y5,(len(x5)),1000)
+print('slope djf: ',regres_djf[0])   
+print('Intercept djf: ',regres_djf[1])
+print('slope error djf: ',regres_djf[2])   
+print('Intercept error djf: ',regres_djf[3])
+
+
+
+#scatter plot 
+title_list = 'DEFRA and GEOS-Chem ammonium'
+title_list1 = 'DEFRA & GEOS-Chem ammonium Annual'
+title_list2 = 'DEFRA & GEOS-Chem ammonium MAM'
+title_list3 = 'DEFRA & GEOS-Chem ammonium JJA'
+title_list4 = 'DEFRA & GEOS-Chem ammonium SON'
+title_list5 = 'DEFRA & GEOS-Chem ammonium DJF'
+
 
 
 #plotting scatter plot
@@ -370,165 +376,165 @@ fig1 = plt.figure(facecolor='White',figsize=[11,11]);pad= 1.1;
 
 ax = plt.subplot(111);
 plt.title(title_list1, fontsize = 20, y=1)
-ax.scatter(x1, y1, c=z1, s=101, edgecolor='',cmap=cm.jet)
-plt.plot(x1, line1, 'r-', linewidth=3)
+
+plt.plot(x1,y1, 'o', color='black',markersize=6)
+xvals=np.arange(0,100,5)
+yvals=regres_annual[1]+xvals*regres_annual[0]
+plt.plot(xvals,yvals, '-', color = 'r')
 lineStart = 0 
 lineEnd = 2
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-# plt.axis('equal')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.draw()
-
 plt.xlabel("GEOS-Chem ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.ylabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
 plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
-# plt.legend(( 'RegressionLine R$^2$={0:.2f}'.format(r_valueA),'1:1 Line','Data'))
-plt.legend(('RegressionLine' ,'1:1 Line','Data'),fontsize = 16)
-# print slope1,round(slope1,2),str(round(intercept1,1))
-ax.annotate('R$^2$ = {0:.2f}'.format(r_value1*r_value1),xy=(0.8,0.7), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
-ax.annotate('y = {0:.2f}'.format(slope1)+'x + {0:.2f}'.format(intercept1),xy=(0.7,0.63), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
+plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
+add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
+		format(a=regres_annual[0],b=regres_annual[1],c=regres_annual[2],d=regres_annual[3]))
+plt.text(1.1,1.7,add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
+add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_annual[0]*correlate_annual[0]))
+plt.text(1.1,1.6, add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
-  ax.spines[axis].set_linewidth(3)
- 
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonium_GEOS-Chem_DEFRAscatter_annual.png',bbox_inches='tight')
+		ax.spines[axis].set_linewidth(2)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonium_GEOS-Chem_DEFRAscatter_annual_bootstrap.png',bbox_inches='tight')
+#plt.show()
 
 fig2 = plt.figure(facecolor='White',figsize=[15,18]);pad= 1.1;
 
 ax = plt.subplot(221);
 plt.title(title_list2, fontsize = 20, y=1)
-ax.scatter(x2, y2, c=z2, s=101, edgecolor='',cmap=cm.jet)
-plt.plot(x2, line2, 'r-', linewidth=3)
+
+plt.plot(x2,y2, 'o', color='black',markersize=6)
+xvals=np.arange(0,100,5)
+yvals=regres_mam[1]+xvals*regres_mam[0]
+plt.plot(xvals,yvals, '-', color = 'r')
 lineStart = 0 
 lineEnd = 2
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-# plt.axis('equal')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.draw()
-
 plt.xlabel("GEOS-Chem ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.ylabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
 plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
-# plt.legend(( 'RegressionLine R$^2$={0:.2f}'.format(r_valueA),'1:1 Line','Data'))
-plt.legend(('RegressionLine' ,'1:1 Line','Data'),fontsize = 16)
-# print slope1,round(slope1,2),str(round(intercept1,1))
-ax.annotate('R$^2$ = {0:.2f}'.format(r_value2*r_value2),xy=(0.8,0.7), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
-ax.annotate('y = {0:.2f}'.format(slope2)+'x + {0:.2f}'.format(intercept2),xy=(0.7,0.63), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
+plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
+add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
+		format(a=regres_mam[0],b=regres_mam[1],c=regres_mam[2],d=regres_mam[3]))
+plt.text(1.1,1.7,add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
+add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_mam[0]*correlate_mam[0]))
+plt.text(1.1,1.6, add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
-  ax.spines[axis].set_linewidth(3)
+		ax.spines[axis].set_linewidth(2)
   
 ax = plt.subplot(222);
 plt.title(title_list3, fontsize = 20, y=1)
-ax.scatter(x3, y3, c=z3, s=101, edgecolor='',cmap=cm.jet)
-plt.plot(x3, line3, 'r-', linewidth=3)
+
+plt.plot(x3,y3, 'o', color='black',markersize=6)
+xvals=np.arange(0,100,5)
+yvals=regres_jja[1]+xvals*regres_jja[0]
+plt.plot(xvals,yvals, '-', color = 'r')
 lineStart = 0 
 lineEnd = 2
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-# plt.axis('equal')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.draw()
-
 plt.xlabel("GEOS-Chem ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.ylabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
 plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
-# plt.legend(( 'RegressionLine R$^2$={0:.2f}'.format(r_valueA),'1:1 Line','Data'))
-plt.legend(('RegressionLine' ,'1:1 Line','Data'),fontsize = 16)
-# print slope1,round(slope1,2),str(round(intercept1,1))
-ax.annotate('R$^2$ = {0:.2f}'.format(r_value3*r_value3),xy=(0.8,0.7), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
-ax.annotate('y = {0:.2f}'.format(slope3)+'x + {0:.2f}'.format(intercept3),xy=(0.7,0.63), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
+plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
+add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
+		format(a=regres_jja[0],b=regres_jja[1],c=regres_jja[2],d=regres_jja[3]))
+plt.text(1.1,1.7,add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
+add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_jja[0]*correlate_jja[0]))
+plt.text(1.1,1.6, add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
-  ax.spines[axis].set_linewidth(3)
+		ax.spines[axis].set_linewidth(2)
   
 ax = plt.subplot(223);
 plt.title(title_list4, fontsize = 20, y=1)
-ax.scatter(x4, y4, c=z4, s=101, edgecolor='',cmap=cm.jet)
-plt.plot(x4, line4, 'r-', linewidth=3)
+
+plt.plot(x4,y4, 'o', color='black',markersize=6)
+xvals=np.arange(0,100,5)
+yvals=regres_son[1]+xvals*regres_son[0]
+plt.plot(xvals,yvals, '-', color = 'r')
 lineStart = 0 
 lineEnd = 2
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-# plt.axis('equal')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.draw()
-
 plt.xlabel("GEOS-Chem ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.ylabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
 plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
-# plt.legend(( 'RegressionLine R$^2$={0:.2f}'.format(r_valueA),'1:1 Line','Data'))
-plt.legend(('RegressionLine' ,'1:1 Line','Data'),fontsize = 16)
-# print slope1,round(slope1,2),str(round(intercept1,1))
-ax.annotate('R$^2$ = {0:.2f}'.format(r_value4*r_value4),xy=(0.8,0.7), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
-ax.annotate('y = {0:.2f}'.format(slope4)+'x + {0:.2f}'.format(intercept4),xy=(0.7,0.63), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
+plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
+add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
+		format(a=regres_son[0],b=regres_son[1],c=regres_son[2],d=regres_son[3]))
+plt.text(1.1,1.7,add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
+add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_son[0]*correlate_son[0]))
+plt.text(1.1,1.6, add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
-  ax.spines[axis].set_linewidth(3)
+		ax.spines[axis].set_linewidth(2)
 
 
 ax = plt.subplot(224);
 plt.title(title_list5, fontsize = 20, y=1)
-ax.scatter(x5, y5, c=z5, s=101, edgecolor='',cmap=cm.jet)
-plt.plot(x5, line5, 'r-', linewidth=3)
+
+plt.plot(x5,y5, 'o', color='black',markersize=6)
+xvals=np.arange(0,100,5)
+yvals=regres_djf[1]+xvals*regres_djf[0]
+plt.plot(xvals,yvals, '-', color = 'r')
 lineStart = 0 
 lineEnd = 2
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-# plt.axis('equal')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.draw()
-
 plt.xlabel("GEOS-Chem ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.ylabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.gca().set_aspect('equal', adjustable='box')
+plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
 plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
-# plt.legend(( 'RegressionLine R$^2$={0:.2f}'.format(r_valueA),'1:1 Line','Data'))
-plt.legend(('RegressionLine' ,'1:1 Line','Data'),fontsize = 16)
-# print slope1,round(slope1,2),str(round(intercept1,1))
-ax.annotate('R$^2$ = {0:.2f}'.format(r_value5*r_value5),xy=(0.8,0.7), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
-ax.annotate('y = {0:.2f}'.format(slope5)+'x + {0:.2f}'.format(intercept5),xy=(0.7,0.63), xytext=(0, pad),
-		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=20)
+plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
+add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
+		format(a=regres_djf[0],b=regres_djf[1],c=regres_djf[2],d=regres_djf[3]))
+plt.text(1.1,1.7,add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
+add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_djf[0]*correlate_djf[0]))
+plt.text(1.1,1.6, add2plt, fontsize=16,\
+		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
-  ax.spines[axis].set_linewidth(3)
+		ax.spines[axis].set_linewidth(2)
 
 
 plt.subplots_adjust(left=0.05, bottom=0.07, right=0.98, top=0.97, wspace=0.20, hspace=0.05);
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonium_GEOS-Chem_DEFRAscatter_seasonal.png',bbox_inches='tight')
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonium_GEOS-Chem_DEFRAscatter_seasonal_bootstrap.png',bbox_inches='tight')
 plt.show()

@@ -143,11 +143,16 @@ print (sites_nitrate_AM, sites_name, sites_lat, sites_lon)
 #####Reading GEOS-Chem files ################
 
 
-#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016")
-os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 
-Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
 Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
+StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+
 Species = Species[:] 
 Aerosols = Aerosols[:]
 #print(Aerosols, Species, sep = "\n")
@@ -176,7 +181,7 @@ GC_surface_nitrate_son = sum(GC_surface_nitrate[8:11])/len(GC_surface_nitrate[8:
 GC_surface_nitrate_jf = sum(GC_surface_nitrate[0:2])/len(GC_surface_nitrate[0:2])
 print (GC_surface_nitrate_jf, 'jf_shape')
 
-GC_surface_nitrate_d = GC_surface_nitrate[0]
+GC_surface_nitrate_d = GC_surface_nitrate[11]
 print (GC_surface_nitrate_d, 'd_shape')
 
 #mean of JF and Dec using np.array --> creating problem in plotting
@@ -238,16 +243,25 @@ print (sites_nitrate_AM.shape)
 # Compare DERFA and GEOS-Chem:
 
 #Normalized mean bias
-nmb_Annual=100.*((sites_nitrate_AM)- np.mean(gc_data_nitrate_annual))/(gc_data_nitrate_annual)
-nmb_mam=100.*((sites_nitrate_mam)- np.mean(gc_data_nitrate_mam))/(gc_data_nitrate_mam)
-nmb_jja=100.*((sites_nitrate_jja)- np.mean(gc_data_nitrate_jja))/(gc_data_nitrate_jja)
-nmb_son=100.*((sites_nitrate_son)- np.mean(gc_data_nitrate_son))/(gc_data_nitrate_son)
-nmb_djf=100.*((sites_nitrate_djf)- np.mean(gc_data_nitrate_djf))/(gc_data_nitrate_djf)
+#nmb_Annual=100.*((np.nanmean(sites_nitrate_AM))- np.nanmean(gc_data_nitrate_annual))/np.nanmean(gc_data_nitrate_annual)
+#nmb_mam=100.*((np.nanmean(sites_nitrate_mam))- np.nanmean(gc_data_nitrate_mam))/np.nanmean(gc_data_nitrate_mam)
+#nmb_jja=100.*((np.nanmean(sites_nitrate_jja))- np.nanmean(gc_data_nitrate_jja))/np.nanmean(gc_data_nitrate_jja)
+#nmb_son=100.*((np.nanmean(sites_nitrate_son))- np.nanmean(gc_data_nitrate_son))/np.nanmean(gc_data_nitrate_son)
+#nmb_djf=100.*((np.nanmean(sites_nitrate_djf))- np.nanmean(gc_data_nitrate_djf))/np.nanmean(gc_data_nitrate_djf)
+
+nmb_Annual=100.*((np.nanmean(gc_data_nitrate_annual))- np.nanmean(sites_nitrate_AM))/np.nanmean(sites_nitrate_AM)
+nmb_mam=100.*((np.nanmean(gc_data_nitrate_mam))- np.nanmean(sites_nitrate_mam))/np.nanmean(sites_nitrate_mam)
+nmb_jja=100.*((np.nanmean(gc_data_nitrate_jja))- np.nanmean(sites_nitrate_jja))/np.nanmean(sites_nitrate_jja)
+nmb_son=100.*((np.nanmean(gc_data_nitrate_son))- np.nanmean(sites_nitrate_son))/np.nanmean(sites_nitrate_son)
+nmb_djf=100.*((np.nanmean(gc_data_nitrate_djf))- np.nanmean(sites_nitrate_djf))/np.nanmean(sites_nitrate_djf)
+
 print(' DEFRA NMB_Annual= ', nmb_Annual)
 print(' DEFRA NMB_mam = ', nmb_mam)
 print(' DEFRA NMB_jja = ', nmb_jja)
 print(' DEFRA NMB_son = ', nmb_son)
 print(' DEFRA NMB_djf = ', nmb_djf)
+
+
 
 #correlation
 correlate_Annual=stats.pearsonr(gc_data_nitrate_annual,sites_nitrate_AM)
@@ -309,13 +323,12 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_nitrate_AM,
 ax.set_title('DEFRA and GEOS-Chem Particulate nitrate (Annual)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
-
-ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_nitrate ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -348,12 +361,13 @@ ax.set_title('DEFRA and GEOS-Chem Particulate nitrate (mam)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.85,0.9), xytext=(0, pad),
+
+ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB mam= {0:.2f}'.format(nmb_mam),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_nitrate ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -389,12 +403,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate nitrate (jja)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_jja= {0:.2f}'.format(correlate_jja[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_jja = {0:.2f}'.format(correlate_jja[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB jja= {0:.2f}'.format(nmb_jja),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_nitrate ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -427,12 +441,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate nitrate (son)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB son = {0:.2f}'.format(nmb_son),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_nitrate ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
@@ -466,12 +480,12 @@ ax.set_title('DEFRA and GEOS-Chem Particulate nitrate (djf)')
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.85,0.9), xytext=(0, pad),
+ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.8,0.7), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-#ax.annotate('NMB Annual= {0:.2f}'.format(nmb_mam[1]),xy=(0.8,0.15), xytext=(0, pad),
-#		xycoords='axes fraction', textcoords='offset points',
-#		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+ax.annotate('NMB djf = {0:.2f}'.format(nmb_djf),xy=(0.8,0.6), xytext=(0, pad),
+		xycoords='axes fraction', textcoords='offset points',
+		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
 colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_nitrate ($\mu$g m$^{-3}$)',
                         orientation='vertical',shrink=0.5,pad=0.01)
