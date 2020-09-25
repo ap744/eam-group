@@ -15,10 +15,10 @@ GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
 FIGURE_DIR = '/home/j/jfr10/alok/figures'
 
-IASI_UK_LAT_MIN_INDEX = 172
-IASI_UK_LAT_MAX_INDEX = 279
-IASI_UK_LON_MIN_INDEX = 50
-IASI_UK_LON_MAX_INDEX = 176
+IASI_UK_LAT_MIN_INDEX = 1
+IASI_UK_LAT_MAX_INDEX = 108
+IASI_UK_LON_MIN_INDEX = 1
+IASI_UK_LON_MAX_INDEX = 127
 
 NAEI_UK_LAT_MIN_INDEX = 7
 NAEI_UK_LAT_MAX_INDEX = 114
@@ -33,6 +33,8 @@ mair = 28.97  # g(air)/mol
 
 ANALYSIS_YEAR = 2016
 
+class BadBoundaryException(Exception):
+	pass
 
 def main():
 	data_emission, gc_column = get_data_for_year(GC_FOLDER_PATH)
@@ -174,6 +176,9 @@ def read_variable_over_area(dataset_path, variable_id,
 	lat_view = lats[lat_min_index:lat_max_index]
 	lon_view = lons[lon_min_index:lon_max_index]
 	data_view = data[..., lat_min_index:lat_max_index, lon_min_index:lon_max_index]
+	if 0 in data_view.shape:
+		print("Bad bounding box defined for {}".format(dataset_path))
+		raise BadBoundaryException
 	return data_view, lat_view, lon_view
 
 
