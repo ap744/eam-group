@@ -38,6 +38,8 @@ mair = 28.97  # g(air)/mol
 
 ANALYSIS_YEAR = 2016
 
+MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP',  'OCT',  'NOV',  'DEC']
+
 class BadBoundaryException(Exception):
 	pass
 
@@ -82,19 +84,19 @@ def main():
 	iasi_plot = plt.figure()
 	for month, iasi_ratio in enumerate(iasi_ratios):
 		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(iasi_ratio, ax, iasi_lats, iasi_lons)
+		plot_dataset(iasi_ratio, ax, MONTHS[month], iasi_lats, iasi_lons)
 	iasi_plot.savefig(os.path.join(FIGURE_DIR, 'IASI_derived_NH3emissionF11W.png'))
 	
 	naei_plot = plt.figure()
 	for month, naei_ratio in enumerate(naei_ratios):
 		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(naei_ratio, ax, naei_lats, naei_lons)
+		plot_dataset(naei_ratio, ax, MONTHS[month], naei_lats, naei_lons)
 	naei_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_NH3_emissionF11W.png'))
 
 	diff_plot = plt.figure()
 	for month, difference in enumerate(differences):
 		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(difference, ax, naei_lats, naei_lons)
+		plot_dataset(difference, ax, MONTHS[month], naei_lats, naei_lons)
 	diff_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_IASI_difference_emissionF11W.png'))
 
 
