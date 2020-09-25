@@ -167,10 +167,10 @@ def regrid(data, from_lat, from_lon, to_resolution):
 
 def read_variable_over_area(dataset_path, variable_id,
 						lat_min_index, lat_max_index, lon_min_index, lon_max_index):
+	lats, lons = get_lat_lon_scale(dataset_path)
 	data_set = nc4.Dataset(dataset_path, mode='r')
-	lats = data_set.variables['lat'][:]
-	lons = data_set.variables['lon'][:]
 	data = data_set.variables[variable_id][:]
+	data_set.close()
 	lat_view = lats[lat_min_index:lat_max_index]
 	lon_view = lons[lon_min_index:lon_max_index]
 	data_view = data[lat_min_index:lat_max_index, lon_min_index:lon_max_index]
