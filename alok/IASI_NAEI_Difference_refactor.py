@@ -13,6 +13,7 @@ IASI_PATH = '/scratch/uptrop/em440/for_Alok/iasi_ncdf/iasi_nh3_uk_oversampled_20
 NAEI_PATH = '/scratch/uptrop/em440/for_Alok/naei_nh3/NAEI_total_NH3_0.1x0.1_2016.nc'
 GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
+FIGURE_DIR = '/home/j/jfr10/alok/figures'
 
 IASI_UK_LAT_MIN_INDEX = 172
 IASI_UK_LAT_MAX_INDEX = 279
@@ -70,16 +71,19 @@ def main():
 	for month, iasi_ratio in enumerate(iasi_ratios):
 		ax = plt.subplot(3, 4, month + 1)
 		plot_dataset(iasi_ratio, ax, iasi_lats, iasi_lons)
+	iasi_plot.savefig(os.path.join(FIGURE_DIR, 'IASI_derived_NH3emissionF11W.png'))
 	
 	naei_plot = plt.figure()
 	for month, naei_ratio in enumerate(naei_ratios):
 		ax = plt.subplot(3, 4, month + 1)
 		plot_dataset(naei_ratio, ax, naei_lats, naei_lons)
+	naei_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_NH3_emissionF11W.png'))
 
 	diff_plot = plt.figure()
 	for month, difference in enumerate(differences):
 		ax = plt.subplot(3, 4, month + 1)
 		plot_dataset(difference, ax, naei_lats, naei_lons)
+	diff_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_IASI_difference_emissionF11W.png'))
 
 
 def get_data_for_year(gc_folder):
