@@ -173,7 +173,7 @@ def read_variable_over_area(dataset_path, variable_id,
 	data_set.close()
 	lat_view = lats[lat_min_index:lat_max_index]
 	lon_view = lons[lon_min_index:lon_max_index]
-	data_view = data[lat_min_index:lat_max_index, lon_min_index:lon_max_index]
+	data_view = data[..., lat_min_index:lat_max_index, lon_min_index:lon_max_index]
 	return data_view, lat_view, lon_view
 
 
