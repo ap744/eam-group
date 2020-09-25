@@ -70,9 +70,10 @@ def main():
 	annual_emission = np.nansum(data_emission_uk, axis=0)   # ALOK: SHOULD THIS BE JUST OVER THE UK?
 
 	iasi_ratios, naei_ratios, differences = [], [], []
-	for iasi_month, naei_month in zip(iasi_monthly_uk, naei_monthly_uk):
-		masked_iasi_ratio = calc_iasi_nh3(data_emission_uk, gc_column_uk, iasi_month) * uk_mask
-		masked_naei_ratio = calc_naei_nh3(data_emission_uk, naei_month, annual_emission) * uk_mask
+	for iasi_month, naei_month, gc_column_month, data_emission_month \
+			in zip(iasi_monthly_uk, naei_monthly_uk, gc_column_uk, data_emission_uk):
+		masked_iasi_ratio = calc_iasi_nh3(data_emission_month, gc_column_month, iasi_month) * uk_mask
+		masked_naei_ratio = calc_naei_nh3(data_emission_month, naei_month, annual_emission) * uk_mask
 		difference = masked_naei_ratio - masked_iasi_ratio
 		iasi_ratios.append(masked_iasi_ratio)
 		naei_ratios.append(masked_naei_ratio)
