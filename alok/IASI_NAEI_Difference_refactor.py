@@ -24,6 +24,8 @@ NAEI_UK_LAT_MAX_INDEX = 114
 NAEI_UK_LON_MIN_INDEX = 4
 NAEI_UK_LON_MAX_INDEX = 130
 
+REGRID_RES = 0.1
+
 NA = 6.022e23  # molecules/mol
 mNH3 = 17.0  # g(NO2)/mol
 mair = 28.97  # g(air)/mol
@@ -33,12 +35,11 @@ ANALYSIS_YEAR = 2016
 
 def main():
 	data_emission, gc_column = get_data_for_year(GC_FOLDER_PATH)
-	annual_emission = "baz"
 
 	sat_lats, sat_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "satellite_files", "ts_08_11.EU.20160101.nc"))
-	data_emission = regrid(data_emission, sat_lats, sat_lons)
+	data_emission, sat_lats, sat_lons = regrid(data_emission, sat_lats, sat_lons, REGRID_RES)
 	gc_lats, gc_lons = os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc")
-	gc_column = regrid(gc_column, gc_lats, gc_lons)
+	gc_column, gc_lats, gc_lons = regrid(gc_column, gc_lats, gc_lons, REGRID_RES)
 
 	iasi_monthly_uk, iasi_lats, iasi_lons = read_variable_over_area(IASI_PATH, "iasi_nh3",
 																	IASI_UK_LAT_MIN_INDEX, IASI_UK_LAT_MAX_INDEX,
@@ -53,6 +54,8 @@ def main():
 
 	naei_monthly_uk = (naei_nh3 * naei_area )/1000   # kg/yr
 	uk_mask = np.where(naei_monthly_uk >= 100, 1, 0)    # multiplicative mask
+
+	annual_emission = np.nansum(data_emission, axis=0)
 
 	iasi_ratios, naei_ratios, differences = [], [], []
 	for iasi_month, naei_month in zip(iasi_monthly_uk, naei_monthly_uk):
@@ -139,7 +142,7 @@ def get_lat_lon_scale(data_path):
 	return lat, lon
 
 
-def regrid(data, from_lat, from_lon, to_resolution = 0.1):
+def regrid(data, from_lat, from_lon, to_resolution):
 	lat_min, lon_min = np.nanmin(from_lat), np.nanmin(from_lon)
 	lat_max, lon_max = np.nanmax(from_lat), np.nanmax(from_lon)
 	to_lat = np.arange(lat_min, lat_max, to_resolution)
@@ -148,8 +151,7 @@ def regrid(data, from_lat, from_lon, to_resolution = 0.1):
 	latitude = DimCoord(from_lat, standard_name='latitude', units='degrees')
 	longitude = DimCoord(from_lon, standard_name='longitude', units='degrees')
 	time = DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
-	cube1 = Cube(data,dim_coords_and_dims=[(latitude, 1), (longitude, 2), (time, 0)])
-
+	cube1 = Cube(data, dim_coords_and_dims=[(time, 2), (latitude, 0), (longitude, 1)])
 	regridded_data = cube1.interpolate([('latitude', to_lat), ('longitude', to_lon)], iris.analysis.Linear())
 
 	return regridded_data.data[:], regridded_data.coord('latitude').points[:], regridded_data.coord('longitude').points[:]
