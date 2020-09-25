@@ -49,6 +49,9 @@ def main():
 	gc_lats, gc_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc"))
 	gc_column, gc_lats, gc_lons = regrid(gc_column, gc_lats, gc_lons, REGRID_RES)
 
+	data_emission_uk = data_emission[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
+	gc_column_uk = gc_column[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
+
 	iasi_monthly_uk, iasi_lats, iasi_lons = read_variable_over_area(IASI_PATH, "iasi_nh3",
 																	IASI_UK_LAT_MIN_INDEX, IASI_UK_LAT_MAX_INDEX,
 																	IASI_UK_LON_MIN_INDEX, IASI_UK_LON_MAX_INDEX)
@@ -60,16 +63,16 @@ def main():
 																	NAEI_UK_LAT_MIN_INDEX, NAEI_UK_LAT_MAX_INDEX,
 																	NAEI_UK_LON_MIN_INDEX, NAEI_UK_LON_MAX_INDEX)
 
-	naei_monthly = (naei_nh3 * naei_area )/1000   # kg/yr
-	naei_monthly_uk = naei_monthly[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
+	naei_monthly_uk = (naei_nh3 * naei_area )/1000   # kg/yr
+
 	uk_mask = np.where(naei_monthly_uk >= 100, 1, 0)    # multiplicative mask
 
-	annual_emission = np.nansum(data_emission, axis=0)
+	annual_emission = np.nansum(data_emission_uk, axis=0)   # ALOK: SHOULD THIS BE JUST OVER THE UK?
 
 	iasi_ratios, naei_ratios, differences = [], [], []
 	for iasi_month, naei_month in zip(iasi_monthly_uk, naei_monthly_uk):
-		masked_iasi_ratio = calc_iasi_nh3(data_emission, gc_column, iasi_month) * uk_mask
-		masked_naei_ratio = calc_naei_nh3(data_emission, naei_month, annual_emission) * uk_mask
+		masked_iasi_ratio = calc_iasi_nh3(data_emission_uk, gc_column_uk, iasi_month) * uk_mask
+		masked_naei_ratio = calc_naei_nh3(data_emission_uk, naei_month, annual_emission) * uk_mask
 		difference = masked_naei_ratio - masked_iasi_ratio
 		iasi_ratios.append(masked_iasi_ratio)
 		naei_ratios.append(masked_naei_ratio)
