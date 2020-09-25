@@ -118,7 +118,7 @@ def load_and_preproc_sat_data(sat_file_path):
 def load_and_preproc_emission_data(em_file_path):
 	ncf_em = nc4.Dataset(em_file_path, mode='r')
 	nh3_emission_total = ncf_em.variables['EmisNH3_Total'][:]
-	area_emissions = ncf_em.variables['AREA']
+	area_emissions = ncf_em.variables['AREA'][:]
 	ncf_em.close()
 
 	nh3_emission_total = nh3_emission_total[0, :, :, :]
