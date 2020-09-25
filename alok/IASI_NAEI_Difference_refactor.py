@@ -5,9 +5,9 @@ import os
 import glob
 import iris
 
-IASI_PATH = "/some/kind/of/path.nc"
-NAEI_PATH = "/some/kind/of/path.nc"
-GC_FOLDER_PATH = "/some/kind/of/directory/"
+IASI_PATH = "/scratch/uptrop/em440/for_Alok/iasi_ncdf/"
+NAEI_PATH = "/scratch/uptrop/em440/for_Alok/naei_nh3/"
+GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
 
 IASI_UK_LAT_MIN_INDEX = 172
