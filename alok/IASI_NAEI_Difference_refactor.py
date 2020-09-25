@@ -136,8 +136,12 @@ def load_and_preproc_emission_data(em_file_path):
 
 def get_lat_lon_scale(data_path):
 	data = nc4.Dataset(data_path, mode='r')
-	lat = data.variables['LAT'][:]
-	lon = data.variables['LON'][:]
+	try:
+		lat = data.variables['LAT'][:]
+		lon = data.variables['LON'][:]
+	except KeyError:
+		lat = data.variables['lat'][:]
+		lon = data.variables['lon'][:]
 	data.close()
 	return lat, lon
 
