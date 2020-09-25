@@ -6,6 +6,8 @@ import glob
 import iris
 from iris.coords import DimCoord
 from iris.cube import Cube
+from mpl_toolkits.basemap import Basemap
+
 
 IASI_PATH = "/scratch/uptrop/em440/for_Alok/iasi_ncdf/"
 NAEI_PATH = "/scratch/uptrop/em440/for_Alok/naei_nh3/"
@@ -31,11 +33,12 @@ ANALYSIS_YEAR = 2016
 
 def main():
 	data_emission, gc_column = get_data_for_year(GC_FOLDER_PATH)
-	lats, lons = get_lat_lon_scale(GC_FOLDER_PATH)
 	annual_emission = "baz"
 
-	data_emission = regrid(data_emission, lats, lons)
-	gc_column = regrid(gc_column, lats, lons)
+	sat_lats, sat_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "satellite_files", "ts_08_11.EU.20160101.nc"))
+	data_emission = regrid(data_emission, sat_lats, sat_lons)
+	gc_lats, gc_lons = os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc")
+	gc_column = regrid(gc_column, gc_lats, gc_lons)
 
 	iasi_monthly_uk, iasi_lats, iasi_lons = read_variable_over_area(IASI_PATH, "iasi_nh3",
 																	IASI_UK_LAT_MIN_INDEX, IASI_UK_LAT_MAX_INDEX,
@@ -128,8 +131,7 @@ def load_and_preproc_emission_data(em_file_path):
 	return nh3_emission_total
 
 
-def get_lat_lon_scale(gc_folder_path):
-	data_path = os.path.join(gc_folder_path, "satellite_files", "ts_08_11.EU.20160101.nc")
+def get_lat_lon_scale(data_path):
 	data = nc4.Dataset(data_path, mode='r')
 	lat = data.variables['LAT'][:]
 	lon = data.variables['LON'][:]
@@ -236,6 +238,7 @@ def spatial_figure(axs, data, lons, lats, colormap, colorbar_min, colorbar_max, 
 
 
 def plot_dataset(dataset, ax, title, lon_range, lat_range):
+	pad = 1.1
 	plt.title(title, fontsize=30, y=1)
 	colormap = discrete_cmap();
 	colorbar_min = 0;
