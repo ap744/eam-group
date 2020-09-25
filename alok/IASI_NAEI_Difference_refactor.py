@@ -15,6 +15,11 @@ GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
 FIGURE_DIR = '/home/j/jfr10/alok/figures'
 
+SAT_UK_LAT_MIN_INDEX = 172
+SAT_UK_LAT_MAX_INDEX = 279
+SAT_UK_LON_MIN_INDEX = 50
+SAT_UK_LON_MAX_INDEX = 176
+
 IASI_UK_LAT_MIN_INDEX = 1
 IASI_UK_LAT_MAX_INDEX = 108
 IASI_UK_LON_MIN_INDEX = 1
@@ -55,7 +60,8 @@ def main():
 																	NAEI_UK_LAT_MIN_INDEX, NAEI_UK_LAT_MAX_INDEX,
 																	NAEI_UK_LON_MIN_INDEX, NAEI_UK_LON_MAX_INDEX)
 
-	naei_monthly_uk = (naei_nh3 * naei_area )/1000   # kg/yr
+	naei_monthly = (naei_nh3 * naei_area )/1000   # kg/yr
+	naei_monthly_uk = naei_monthly[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
 	uk_mask = np.where(naei_monthly_uk >= 100, 1, 0)    # multiplicative mask
 
 	annual_emission = np.nansum(data_emission, axis=0)
