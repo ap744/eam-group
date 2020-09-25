@@ -270,7 +270,8 @@ def spatial_figure(axs, data, lons, lats, colormap, colorbar_min, colorbar_max, 
 def plot_dataset(dataset, ax, title, lon_range, lat_range, colorbar_min, colorbar_max):
 	pad = 1.1
 	plt.title(title, fontsize=30, y=1)
-	colormap = discrete_cmap(20, 'viridis')
+	#colormap = discrete_cmap(20, 'viridis')
+	colormap = 'viridis'
 	colormesh_1 = spatial_figure(ax, dataset, lon_range, lat_range, colormap, colorbar_min,
 								 colorbar_max, tb_lef=True, tb_bot=True, bad_data=False)
 	# ax.annotate('MAM',xy=(0.07,0.90), xytext=(0, pad),
