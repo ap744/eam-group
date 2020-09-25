@@ -38,7 +38,7 @@ def main():
 
 	sat_lats, sat_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "satellite_files", "ts_08_11.EU.20160101.nc"))
 	data_emission, sat_lats, sat_lons = regrid(data_emission, sat_lats, sat_lons, REGRID_RES)
-	gc_lats, gc_lons = os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc")
+	gc_lats, gc_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc"))
 	gc_column, gc_lats, gc_lons = regrid(gc_column, gc_lats, gc_lons, REGRID_RES)
 
 	iasi_monthly_uk, iasi_lats, iasi_lons = read_variable_over_area(IASI_PATH, "iasi_nh3",
