@@ -4,6 +4,8 @@ import netCDF4 as nc4
 import os
 import glob
 import iris
+from iris.coords import DimCoord
+from iris.cube import Cube
 
 IASI_PATH = "/scratch/uptrop/em440/for_Alok/iasi_ncdf/"
 NAEI_PATH = "/scratch/uptrop/em440/for_Alok/naei_nh3/"
@@ -141,10 +143,10 @@ def regrid(data, from_lat, from_lon, to_resolution = 0.1):
 	to_lat = np.arange(lat_min, lat_max, to_resolution)
 	to_lon = np.arange(lon_min, lon_max, to_resolution)
 
-	latitude = iris.DimCoord(from_lat, standard_name='latitude', units='degrees')
-	longitude = iris.DimCoord(from_lon, standard_name='longitude', units='degrees')
-	time = iris.DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
-	cube1 = iris.Cube(data,dim_coords_and_dims=[(latitude, 1), (longitude, 2), (time, 0)])
+	latitude = DimCoord(from_lat, standard_name='latitude', units='degrees')
+	longitude = DimCoord(from_lon, standard_name='longitude', units='degrees')
+	time = DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
+	cube1 = Cube(data,dim_coords_and_dims=[(latitude, 1), (longitude, 2), (time, 0)])
 
 	regridded_data = cube1.interpolate([('latitude', to_lat), ('longitude', to_lon)], iris.analysis.Linear())
 
