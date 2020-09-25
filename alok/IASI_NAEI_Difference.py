@@ -173,7 +173,7 @@ def daily_data(month,day):
 
 def monthly_mean_cal():	
 	months=np.arange(1,13)
-	time_series = np.empty(len(months));	
+	time_series = np.empty(len(months))
 
 	GC_column_mon_mean = np.empty((len(time_series),115,177))
 	GC_column_mon_mean[:] = np.nan

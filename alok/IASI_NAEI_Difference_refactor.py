@@ -86,7 +86,7 @@ def get_data_for_year(gc_folder):
 
 
 def get_data_for_month(gc_folder, month):
-	month_str = str.zfill(month, 2)
+	month_str = str.zfill(str(month), 2)
 	satellite_glob = os.path.join(gc_folder, "satellite_files", "ts_08_11.EU.2016{}*.nc".format(month_str))
 	satellite_file_list = sorted(glob.glob(satellite_glob))
 	emissions_glob = os.path.join(gc_folder, "emissions", "HEMCO_diagnostics.2016{}*0000.nc".format(month_str))
