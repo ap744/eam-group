@@ -49,8 +49,8 @@ def main():
 	gc_lats, gc_lons = get_lat_lon_scale(os.path.join(GC_FOLDER_PATH, "emissions", "HEMCO_diagnostics.201601010000.nc"))
 	gc_column, gc_lats, gc_lons = regrid(gc_column, gc_lats, gc_lons, REGRID_RES)
 
-	data_emission_uk = data_emission[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
-	gc_column_uk = gc_column[SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
+	data_emission_uk = data_emission[..., SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
+	gc_column_uk = gc_column[..., SAT_UK_LAT_MIN_INDEX:SAT_UK_LAT_MAX_INDEX, SAT_UK_LON_MIN_INDEX:SAT_UK_LON_MAX_INDEX]
 
 	iasi_monthly_uk, iasi_lats, iasi_lons = read_variable_over_area(IASI_PATH, "iasi_nh3",
 																	IASI_UK_LAT_MIN_INDEX, IASI_UK_LAT_MAX_INDEX,
