@@ -129,8 +129,8 @@ def load_and_preproc_emission_data(em_file_path):
 def get_lat_lon_scale(gc_folder_path):
 	data_path = os.path.join(gc_folder_path, "satellite_files", "ts_08_11.EU.20160101.nc")
 	data = nc4.Dataset(data_path, mode='r')
-	lat = data.variables['lat'][:]
-	lon = data.variables['lon'][:]
+	lat = data.variables['LAT'][:]
+	lon = data.variables['LON'][:]
 	data.close()
 	return lat, lon
 
