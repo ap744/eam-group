@@ -171,10 +171,10 @@ def regrid(data, from_lat, from_lon, to_resolution):
 	latitude = DimCoord(from_lat, standard_name='latitude', units='degrees')
 	longitude = DimCoord(from_lon, standard_name='longitude', units='degrees')
 	time = DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
-	cube1 = Cube(data, dim_coords_and_dims=[(latitude, 1), (longitude, 2), (time, 0)])
+	cube1 = Cube(data, dim_coords_and_dims=[(time, 2), (latitude, 0), (longitude, 1)])
 	regridded_data = cube1.interpolate([('latitude', to_lat), ('longitude', to_lon)], iris.analysis.Linear())
-
-	return regridded_data.data[:], regridded_data.coord('latitude').points[:], regridded_data.coord('longitude').points[:]
+	reshaped_data = np.transpose(regridded_data.data[:])
+	return reshaped_data, regridded_data.coord('latitude').points[:], regridded_data.coord('longitude').points[:]
 
 
 def read_variable_over_area(dataset_path, variable_id,
