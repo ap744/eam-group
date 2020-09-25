@@ -9,8 +9,8 @@ from iris.cube import Cube
 from mpl_toolkits.basemap import Basemap
 
 
-IASI_PATH = "/scratch/uptrop/em440/for_Alok/iasi_ncdf/"
-NAEI_PATH = "/scratch/uptrop/em440/for_Alok/naei_nh3/"
+IASI_PATH = '/scratch/uptrop/em440/for_Alok/iasi_ncdf/iasi_nh3_uk_oversampled_2008-2018_0.1_jul2020.nc'
+NAEI_PATH = '/scratch/uptrop/em440/for_Alok/naei_nh3/NAEI_total_NH3_0.1x0.1_2016.nc'
 GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
 
