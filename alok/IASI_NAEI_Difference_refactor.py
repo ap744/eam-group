@@ -173,7 +173,7 @@ def regrid(data, from_lat, from_lon, to_resolution):
 	time = DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
 	cube1 = Cube(data, dim_coords_and_dims=[(time, 2), (latitude, 0), (longitude, 1)])
 	regridded_data = cube1.interpolate([('latitude', to_lat), ('longitude', to_lon)], iris.analysis.Linear())
-	reshaped_data = np.transpose(regridded_data.data[:])
+	reshaped_data = np.transpose(regridded_data.data[:], (2, 0, 1))
 	return reshaped_data, regridded_data.coord('latitude').points[:], regridded_data.coord('longitude').points[:]
 
 
