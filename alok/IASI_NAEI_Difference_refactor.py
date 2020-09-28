@@ -7,13 +7,14 @@ import iris
 from iris.coords import DimCoord
 from iris.cube import Cube
 from mpl_toolkits.basemap import Basemap
+import cartopy
 
 
-IASI_PATH = '/scratch/uptrop/em440/for_Alok/iasi_ncdf/iasi_nh3_uk_oversampled_2008-2018_0.1_jul2020.nc'
-NAEI_PATH = '/scratch/uptrop/em440/for_Alok/naei_nh3/NAEI_total_NH3_0.1x0.1_2016.nc'
-GC_FOLDER_PATH = "/scratch/uptrop/em440/for_Alok/gc_ncdf/"
+IASI_PATH = '/home/john/projects/alok/data/iasi_nh3_uk_oversampled_2008-2018_0.1_jul2020.nc'
+NAEI_PATH = '/home/john/projects/alok/data/NAEI_total_NH3_0.1x0.1_2016.nc'
+GC_FOLDER_PATH = "/home/john/projects/alok/data"
 WORLD_PATH = '/scratch/uptrop/ap744/shapefiles/Shapfiles_india/World_shp/World'
-FIGURE_DIR = '/home/j/jfr10/alok/figures'
+FIGURE_DIR = '/home/john/projects/alok/figures/'
 
 SAT_UK_LAT_MIN_INDEX = 172
 SAT_UK_LAT_MAX_INDEX = 279
@@ -43,6 +44,7 @@ MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP',  'OCT',
 class BadBoundaryException(Exception):
 	pass
 
+
 def main():
 	data_emission, gc_column = get_data_for_year(GC_FOLDER_PATH)
 
@@ -65,9 +67,9 @@ def main():
 																	NAEI_UK_LAT_MIN_INDEX, NAEI_UK_LAT_MAX_INDEX,
 																	NAEI_UK_LON_MIN_INDEX, NAEI_UK_LON_MAX_INDEX)
 
-	naei_monthly_uk = (naei_nh3 * naei_area )/1000   # kg/yr
+	naei_monthly_uk = (naei_nh3 * naei_area)/1000   # kg/yr
 
-	uk_mask = np.where(naei_monthly_uk >= 100, 1, 0)    # multiplicative mask
+	uk_mask = np.where(naei_monthly_uk[0] >= 100, 1, 0)  # multiplicative mask, also only one layer
 
 	annual_emission = np.nansum(data_emission_uk, axis=0)   # ALOK: SHOULD THIS BE JUST OVER THE UK?
 
@@ -75,7 +77,9 @@ def main():
 	for iasi_month, naei_month, gc_column_month, data_emission_month \
 			in zip(iasi_monthly_uk, naei_monthly_uk, gc_column_uk, data_emission_uk):
 		masked_iasi_ratio = calc_iasi_nh3(data_emission_month, gc_column_month, iasi_month) * uk_mask
+		masked_iasi_ratio = np.where(masked_iasi_ratio > 0, masked_iasi_ratio, np.nan)
 		masked_naei_ratio = calc_naei_nh3(data_emission_month, naei_month, annual_emission) * uk_mask
+		masked_naei_ratio = np.where(masked_iasi_ratio > 0, masked_naei_ratio, np.nan)
 		difference = masked_naei_ratio - masked_iasi_ratio
 		iasi_ratios.append(masked_iasi_ratio)
 		naei_ratios.append(masked_naei_ratio)
@@ -83,38 +87,44 @@ def main():
 
 	iasi_plot = plt.figure()
 	for month, iasi_ratio in enumerate(iasi_ratios):
-		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(iasi_ratio, ax, MONTHS[month], iasi_lats, iasi_lons,
-					 colorbar_min=0, colorbar_max=60)
+		ax = plt.subplot(1, 1, month + 1, projection=cartopy.crs.PlateCarree())   # Subplot was 3,4 but debugging rn
+		plot_cartopy(iasi_ratio, ax, iasi_lats, iasi_lons, MONTHS[month])
+					# colorbar_min=0, colorbar_max=60)
 	iasi_plot.savefig(os.path.join(FIGURE_DIR, 'IASI_derived_NH3emissionF11W.png'))
 	
 	naei_plot = plt.figure()
 	for month, naei_ratio in enumerate(naei_ratios):
-		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(naei_ratio, ax, MONTHS[month], naei_lats, naei_lons,
-					colorbar_min=0, colorbar_max=60)
+		ax = plt.subplot(1, 1, month + 1, projection=cartopy.crs.PlateCarree())
+		plot_cartopy(naei_ratio, ax, naei_lats, naei_lons, MONTHS[month])
+					#colorbar_min=0, colorbar_max=60)
 	naei_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_NH3_emissionF11W.png'))
 
 	diff_plot = plt.figure()
 	for month, difference in enumerate(differences):
-		ax = plt.subplot(3, 4, month + 1)
-		plot_dataset(difference, ax, MONTHS[month], naei_lats, naei_lons,
-					 colorbar_min=-20, colorbar_max=20)
+		ax = plt.subplot(1, 1, month + 1, projection=cartopy.crs.PlateCarree())
+		plot_cartopy(difference, ax, naei_lats, naei_lons, MONTHS[month])
+					# colorbar_min=-20, colorbar_max=20)
 	diff_plot.savefig(os.path.join(FIGURE_DIR, 'NAEI_IASI_difference_emissionF11W.png'))
 
 
 def get_data_for_year(gc_folder):
+	"""Given a path to a geoschem folder with satellite_data and emissions subfolders, returns a 3D numpy array
+	of shape (lat, lon, num_months), of monthly mean satellite data and monthly summed GC emissions."""
 	sat_stack_list, emission_stack_list = [], []
 	for month in range(1,13):
-		sat_mean, em_sum = get_data_for_month(gc_folder, month)
-		sat_stack_list.append(sat_mean)
-		emission_stack_list.append(em_sum)
+		try:
+			sat_mean, em_sum = get_data_for_month(gc_folder, month)
+			sat_stack_list.append(sat_mean)
+			emission_stack_list.append(em_sum)
+		except ValueError:
+			print("No files found for month {}, skipping".format(month))
 	sat_year_means = np.dstack(sat_stack_list)
 	em_year_sums = np.dstack(emission_stack_list)
 	return sat_year_means, em_year_sums
 
 
 def get_data_for_month(gc_folder, month):
+	"""Loads and means/sums the satellite data and GC emissions"""
 	month_str = str.zfill(str(month), 2)
 	satellite_glob = os.path.join(gc_folder, "satellite_files", "ts_08_11.EU.2016{}*.nc".format(month_str))
 	satellite_file_list = sorted(glob.glob(satellite_glob))
@@ -175,7 +185,8 @@ def regrid(data, from_lat, from_lon, to_resolution):
 
 	latitude = DimCoord(from_lat, standard_name='latitude', units='degrees')
 	longitude = DimCoord(from_lon, standard_name='longitude', units='degrees')
-	time = DimCoord(np.linspace(1, 12, 12), standard_name='time', units='month')
+	num_months = data.shape[2]
+	time = DimCoord(np.linspace(1, num_months, num_months), standard_name='time', units='month')
 	cube1 = Cube(data, dim_coords_and_dims=[(time, 2), (latitude, 0), (longitude, 1)])
 	regridded_data = cube1.interpolate([('latitude', to_lat), ('longitude', to_lon)], iris.analysis.Linear())
 	reshaped_data = np.transpose(regridded_data.data[:], (2, 0, 1))
@@ -184,9 +195,12 @@ def regrid(data, from_lat, from_lon, to_resolution):
 
 def read_variable_over_area(dataset_path, variable_id,
 						lat_min_index, lat_max_index, lon_min_index, lon_max_index):
+	"""Reads a variable over a given set of lat/lon bounds. Assumes yearly data-will
+	stretch an array to the shape of (12, lat, lon) if provided with a 2d array"""
 	lats, lons = get_lat_lon_scale(dataset_path)
 	data_set = nc4.Dataset(dataset_path, mode='r')
 	data = data_set.variables[variable_id][:]
+	data = data.data   # frankly this is getting silly now
 	data_set.close()
 	lat_view = lats[lat_min_index:lat_max_index]
 	lon_view = lons[lon_min_index:lon_max_index]
@@ -194,6 +208,8 @@ def read_variable_over_area(dataset_path, variable_id,
 	if 0 in data_view.shape:
 		print("Bad bounding box defined for {}".format(dataset_path))
 		raise BadBoundaryException
+	if len(data_view.shape) < 3:
+		data_view = np.broadcast_to(data_view, (12, data_view.shape[0], data_view.shape[1]))
 	return data_view, lat_view, lon_view
 
 
@@ -219,6 +235,14 @@ def discrete_cmap(N, base_cmap=None):
 	color_list = base(np.linspace(0, 1, N))
 	cmap_name = base.name + str(N)
 	return base.from_list(cmap_name, color_list, N)
+
+
+def plot_cartopy(data, ax, lons, lats, title):
+	# TODO: Add grid ticks and total NH3
+	nan_data = np.where(data == 0, np.nan, data)
+	plt.contourf(lats, lons, nan_data)
+	ax.coastlines(resolution="10m")
+	plt.title(title)
 
 
 def spatial_figure(axs, data, lons, lats, colormap, colorbar_min, colorbar_max, tb_lef=True, tb_bot=True,
@@ -280,9 +304,6 @@ def plot_dataset(dataset, ax, title, lon_range, lat_range, colorbar_min, colorba
 	ax.annotate('NAEI NH$_3$ = {0:.2f}'.format(title) + ' Gg', xy=(0.41, 0.001), xytext=(0, pad),
 				xycoords='axes fraction', textcoords='offset points',
 				ha='center', va='bottom', rotation='horizontal', fontsize=35, color='r')
-
-
-
 
 
 if __name__ == "__main__":
