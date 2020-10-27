@@ -143,10 +143,21 @@ def NH3():
 
 
 	#####Reading GEOS-Chem files ################
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
@@ -377,13 +388,23 @@ def NH4():
 	#print (sites_ammonium_AM, sites_name, sites_lat, sites_lon)
 
 
+
 	#####Reading GEOS-Chem files ################
 
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")

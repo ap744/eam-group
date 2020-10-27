@@ -144,14 +144,25 @@ def NH3():
 
 	#####Reading GEOS-Chem files ################
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 	StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+
 
 	Species = Species[:] 
 	Aerosols = Aerosols[:]
@@ -381,14 +392,25 @@ def NH4():
 	#####Reading GEOS-Chem files ################
 
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 	StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+	
 	Species = Species[:] 
 	Aerosols = Aerosols[:]
 	#print(Aerosols, Species, sep = "\n")
@@ -650,8 +672,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("GEOS-Chem ammonia/ammonium", fontsize = 20)
-plt.ylabel("DEFRA_ammonia/ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NH4", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NH4", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -659,8 +681,8 @@ plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
-add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
-		format(a=regres_annual[0],b=regres_annual[1],c=regres_annual[2],d=regres_annual[3]))
+add2plt=("y = {a:6.2f}x + {b:6.2f}".\
+		format(a=regres_annual[0],b=regres_annual[1]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_annual[0]*correlate_annual[0]))
@@ -685,8 +707,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("GEOS-Chem ammonia/ammonium", fontsize = 20)
-plt.ylabel("DEFRA_ammonia/ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NH4", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NH4", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -694,8 +716,8 @@ plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
-add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
-		format(a=regres_mam[0],b=regres_mam[1],c=regres_mam[2],d=regres_mam[3]))
+add2plt=("y = {a:6.2f}x + {b:6.2f}".\
+		format(a=regres_mam[0],b=regres_mam[1]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_mam[0]*correlate_mam[0]))
@@ -716,8 +738,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("GEOS-Chem ammonia/ammonium", fontsize = 20)
-plt.ylabel("DEFRA_ammonia/ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NH4", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NH4", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -725,8 +747,8 @@ plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
-add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
-		format(a=regres_jja[0],b=regres_jja[1],c=regres_jja[2],d=regres_jja[3]))
+add2plt=("y = {a:6.2f}x + {b:6.2f}".\
+		format(a=regres_jja[0],b=regres_jja[1]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_jja[0]*correlate_jja[0]))
@@ -747,8 +769,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("GEOS-Chem ammonia/ammonium", fontsize = 20)
-plt.ylabel("DEFRA_ammonia/ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NH4", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NH4", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -756,8 +778,8 @@ plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
-add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
-		format(a=regres_son[0],b=regres_son[1],c=regres_son[2],d=regres_son[3]))
+add2plt=("y = {a:6.2f}x + {b:6.2f}".\
+		format(a=regres_son[0],b=regres_son[1]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_son[0]*correlate_son[0]))
@@ -779,8 +801,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("GEOS-Chem ammonia/ammonium", fontsize = 20)
-plt.ylabel("DEFRA_ammonia/ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NH4", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NH4", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -788,8 +810,8 @@ plt.yticks(fontsize = 16)
 ax.xaxis.get_offset_text().set_size(16)
 plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
-add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
-		format(a=regres_djf[0],b=regres_djf[1],c=regres_djf[2],d=regres_djf[3]))
+add2plt=("y = {a:6.2f}x + {b:6.2f}".\
+		format(a=regres_djf[0],b=regres_djf[1]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_djf[0]*correlate_djf[0]))

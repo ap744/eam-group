@@ -121,6 +121,15 @@ print (df_merge_col.head(25))
 df_merge_colA = df_merge_col.drop(['S No','2016_Data'], axis=1)
 print (df_merge_colA.head(5))
 
+###################################################################################
+###########  Delete Data over Scotland           ##################################
+###################################################################################
+df_merge_colA.drop(df_merge_colA[df_merge_colA['Lat'] > 56].index, inplace = True) 
+print(df_merge_colA.head(11)) 
+df_merge_colA.reset_index(drop=True, inplace=True)
+print(df_merge_colA.head(11)) 
+
+
 # change datatype to float to remove any further problems
 df_merge_colA['Long'] = df_merge_colA['Long'].astype(float)
 df_merge_colA['Lat'] = df_merge_colA['Lat'].astype(float)
@@ -140,14 +149,12 @@ sites_name = df_merge_colA['Site_Name']
 print (sites_sulphate_AM, sites_name, sites_lat, sites_lon)
 
 
-#####Reading GEOS-Chem files ################
-
-
-
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+"""#####Reading GEOS-Chem files ################
+########################### 50% increase in NH3 Emission ##################################
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
@@ -158,7 +165,25 @@ Aerosols = Aerosols[:]
 #print(Aerosols, Species, sep = "\n")
 
 Species  = [xr.open_dataset(file) for file in Species]
+Aerosols = [xr.open_dataset(file) for file in Aerosols]"""
+
+
+##############  new to read files  #############
+#####Reading GEOS-Chem files ################
+path_AerosolMass_2 = "/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/"
+
+########################### 50% increase in NH3 Emission ##################################
+path_AerosolMass_50increase = "/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/"
+
+os.chdir(path_AerosolMass_50increase)
+Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+Aerosols = Aerosols[:]
 Aerosols = [xr.open_dataset(file) for file in Aerosols]
+
+
+
+
 
 GC_surface_sulfate = [data['AerMassSO4'].isel(time=0,lev=0) for data in Aerosols]
 #print (GC_surface_sulfate)
@@ -308,9 +333,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_sulfate_AM.plot(ax=ax,cmap=cmap,vmin = 0,vmax =3,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem sulfate ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_AM,
@@ -318,22 +343,22 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_AM,
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_AM,
 		cmap=cmap,s = 100,vmin = 0,vmax = 3)
 		
-ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (Annual)')
+ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (Annual)',fontsize=20)
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.8,0.7), xytext=(0, pad),
+ax.annotate('Correl_Annual = {0:.2f}'.format(correlate_Annual[0]),xy=(0.65,0.75), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual),xy=(0.8,0.6), xytext=(0, pad),
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
+ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual),xy=(0.65,0.85), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_sulfate ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_annual.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA_sulfate ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_annualwithoutScotland_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -346,9 +371,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_sulfate_mam.plot(ax=ax,cmap=cmap,vmin = 0,vmax =3,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem sulfate ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_mam,
@@ -356,22 +381,22 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_mam,
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_mam,
 		cmap=cmap,s = 100,vmin = 0,vmax = 3)
 		
-ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (mam)')
+ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (mam)',fontsize=20)
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.8,0.7), xytext=(0, pad),
+ax.annotate('Correl_mam = {0:.2f}'.format(correlate_mam[0]),xy=(0.65,0.75), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-ax.annotate('NMB mam= {0:.2f}'.format(nmb_mam),xy=(0.8,0.6), xytext=(0, pad),
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
+ax.annotate('NMB mam= {0:.2f}'.format(nmb_mam),xy=(0.65,0.85), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_sulfate ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_mam.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA_sulfate ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_mamwithoutScotland_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -387,9 +412,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_sulfate_jja.plot(ax=ax,cmap=cmap,vmin = 0,vmax =3,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem sulfate ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_jja,
@@ -397,22 +422,22 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_jja,
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_jja,
 		cmap=cmap,s = 100,vmin = 0,vmax = 3)
 		
-ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (jja)')
+ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (jja)',fontsize=20)
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_jja = {0:.2f}'.format(correlate_jja[0]),xy=(0.8,0.7), xytext=(0, pad),
+ax.annotate('Correl_jja = {0:.2f}'.format(correlate_jja[0]),xy=(0.65,0.75), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-ax.annotate('NMB jja= {0:.2f}'.format(nmb_jja),xy=(0.8,0.6), xytext=(0, pad),
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
+ax.annotate('NMB jja= {0:.2f}'.format(nmb_jja),xy=(0.65,0.85), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_sulfate ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_jja.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA_sulfate ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_jjawithoutScotland_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -425,9 +450,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_sulfate_son.plot(ax=ax,cmap=cmap,vmin = 0,vmax =3,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem sulfate ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_son,
@@ -435,22 +460,22 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_son,
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_son,
 		cmap=cmap,s = 100,vmin = 0,vmax = 3)
 		
-ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (son)')
+ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (son)',fontsize=20)
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.8,0.7), xytext=(0, pad),
+ax.annotate('Correl_son = {0:.2f}'.format(correlate_son[0]),xy=(0.65,0.75), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-ax.annotate('NMB son = {0:.2f}'.format(nmb_son),xy=(0.8,0.6), xytext=(0, pad),
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
+ax.annotate('NMB son = {0:.2f}'.format(nmb_son),xy=(0.65,0.85), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_sulfate ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_son.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA_sulfate ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_sonwithoutScotland_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -464,9 +489,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_sulfate_djf.plot(ax=ax,cmap=cmap,vmin = 0,vmax =3,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem sulfate ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_djf,
@@ -474,21 +499,21 @@ ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_djf,
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_sulphate_djf,
 		cmap=cmap,s = 100,vmin = 0,vmax = 3)
 		
-ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (djf)')
+ax.set_title('DEFRA and GEOS-Chem Particulate sulfate (djf)',fontsize=20)
 PCM=ax.get_children()[2] #get the mappable, the 1st and the 2nd are the x and y axes
 
 
-ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.8,0.7), xytext=(0, pad),
+ax.annotate('Correl_djf = {0:.2f}'.format(correlate_djf[0]),xy=(0.65,0.75), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
-ax.annotate('NMB djf = {0:.2f}'.format(nmb_djf),xy=(0.8,0.6), xytext=(0, pad),
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
+ax.annotate('NMB djf = {0:.2f}'.format(nmb_djf),xy=(0.65,0.85), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
-		ha='center', va='bottom',rotation='horizontal',fontsize=15)
+		ha='center', va='bottom',rotation='horizontal',fontsize=20,color='w')
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_sulfate ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_djf.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA_sulfate ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'sulfate_GEOS-Chem_DEFRAspatial_djfwithoutScotland_scaleNH3_50percent.png',bbox_inches='tight')
 
 plt.show()

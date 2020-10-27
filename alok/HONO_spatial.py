@@ -140,25 +140,25 @@ sites_name = df_merge_colA['Site_Name']
 print (sites_HONO_AM, sites_name, sites_lat, sites_lon)
 
 
-#####Reading GEOS-Chem files ################
 
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
-Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+#########################       Reading GEOS-Chem files    ################################
+#Species = sorted(glob.glob("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/GEOSChem.SpeciesConc*.nc4"))  # iccw
+#print (Species)
+########################### 50% increase in NH3 Emission ##################################
+Species = sorted(glob.glob("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/GEOSChem.SpeciesConc*.nc4"))  #scale Nh3 by 50%
 
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
-Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+StateMet = sorted(glob.glob("/scratch/uptrop/ap744/GEOS-Chem_outputs/GEOSChem.StateMet.2016*b.nc4"))
 
-os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
-StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
 
 Species = Species[:] 
-Aerosols = Aerosols[:]
 StateMet = StateMet[:]
-print(Aerosols, Species, StateMet, sep = "\n")
+
+print(Species, StateMet, sep = "\n")
 
 Species  = [xr.open_dataset(file) for file in Species]
-Aerosols = [xr.open_dataset(file) for file in Aerosols]
 StateMet = [xr.open_dataset(file) for file in StateMet]
+
+
 
 #ds = xr.open_mfdataset(StateMet)
 #monthly_data = ds.resample(time='m').mean()
@@ -330,11 +330,18 @@ ax = plt.axes(projection=ccrs.PlateCarree())
 ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
-GC_surface_HONO_AM.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
+"""GC_surface_HONO_AM.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
 								cbar_kwargs={'shrink': 0.5, 
 											'pad' : 0.01,
 											'label': 'GEOS-Chem HONO ($\mu$g m$^{-3}$)',
+											'orientation':'horizontal'})"""
+
+GC_surface_HONO_AM.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
+
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_HONO_AM,
 		facecolors='none',edgecolors='black',linewidths=5,s = 100)
@@ -352,11 +359,11 @@ ax.annotate('NMB Annual= {0:.2f}'.format(nmb_Annual),xy=(0.8,0.6), xytext=(0, pa
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_HONO ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_annual.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA HONO ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_annual_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -369,9 +376,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_HONO_mam.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem HONO ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_HONO_mam,
@@ -390,11 +397,11 @@ ax.annotate('NMB mam= {0:.2f}'.format(nmb_mam),xy=(0.8,0.6), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_HONO ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_mam.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA HONO ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_mam_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -410,9 +417,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_HONO_jja.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem HONO ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_HONO_jja,
@@ -431,11 +438,11 @@ ax.annotate('NMB jja= {0:.2f}'.format(nmb_jja),xy=(0.8,0.6), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_HONO ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_jja.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA HONO ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_jja_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -448,9 +455,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_HONO_son.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem HONO ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_HONO_son,
@@ -469,11 +476,11 @@ ax.annotate('NMB son = {0:.2f}'.format(nmb_son),xy=(0.8,0.6), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_HONO ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_son.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA HONO ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_son_scaleNH3_50percent.png',bbox_inches='tight')
 
 
 
@@ -487,9 +494,9 @@ ax.add_feature(Europe_map)
 ax.set_extent([-9, 3, 49, 61], crs=ccrs.PlateCarree()) # [lonW,lonE,latS,latN]
 
 GC_surface_HONO_djf.plot(ax=ax,cmap=cmap,vmin = 0,vmax = 1,
-								cbar_kwargs={'shrink': 0.5, 
-											'pad' : 0.01,
-											'label': 'GEOS-Chem HONO ($\mu$g m$^{-3}$)',
+								cbar_kwargs={'shrink': 0.0, 
+											'pad' : 0.09,
+											'label': '',
 											'orientation':'horizontal'})
 
 ax.scatter(x=sites_lon, y=sites_lat,c=sites_HONO_djf,
@@ -508,11 +515,11 @@ ax.annotate('NMB djf = {0:.2f}'.format(nmb_djf),xy=(0.8,0.6), xytext=(0, pad),
 		xycoords='axes fraction', textcoords='offset points',
 		ha='center', va='bottom',rotation='horizontal',fontsize=15)
 		
-colorbar = plt.colorbar(PCM, ax=ax,label='DEFRA_HONO ($\mu$g m$^{-3}$)',
-                        orientation='vertical',shrink=0.5,pad=0.01)
-colorbar.ax.tick_params(labelsize=10) 
-colorbar.ax.xaxis.label.set_size(10)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_djf.png',bbox_inches='tight')
+colorbar = plt.colorbar(PCM, ax=ax,label='GEOS-Chem & DEFRA HONO ($\mu$g m$^{-3}$)',
+                        orientation='horizontal',shrink=0.5,pad=0.01)
+colorbar.ax.tick_params(labelsize=20) 
+colorbar.ax.xaxis.label.set_size(21)
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'HONO_GEOS-Chem_DEFRAspatial_djf_scaleNH3_50percent.png',bbox_inches='tight')
 
 plt.show()
 

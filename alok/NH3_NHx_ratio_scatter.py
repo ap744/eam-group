@@ -142,11 +142,23 @@ def NH3():
 	#print (sites_ammonia_AM, sites_name, sites_lat, sites_lon)
 
 
+
 	#####Reading GEOS-Chem files ################
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
@@ -377,13 +389,23 @@ def NH4():
 	#print (sites_ammonium_AM, sites_name, sites_lat, sites_lon)
 
 
+
 	#####Reading GEOS-Chem files ################
 
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
@@ -646,14 +668,12 @@ print('Intercept error djf: ',regres_djf[3])
 
 
 #scatter plot 
-title_list = 'Geos-Chem NH3 and NH4'
-title_list1 = 'Geos-Chem NH3 and NH4 Annual'
-title_list2 = 'Geos-Chem NH3 and NH4 MAM'
-title_list3 = 'Geos-Chem NH3 and NH4 JJA'
-title_list4 = 'Geos-Chem NH3 and NH4 SON'
-title_list5 = 'Geos-Chem NH3 and NH4 DJF'
-
-
+title_list = 'DEFRA and GEOS-Chem NH3/NHx'
+title_list1 = 'DEFRA & GEOS-Chem NH3/NHx Annual'
+title_list2 = 'DEFRA & GEOS-Chem NH3/NHx MAM'
+title_list3 = 'DEFRA & GEOS-Chem NH3/NHx JJA'
+title_list4 = 'DEFRA & GEOS-Chem NH3/NHx SON'
+title_list5 = 'DEFRA & GEOS-Chem NH3/NHx DJF'
 
 #plotting scatter plot
 fig1 = plt.figure(facecolor='White',figsize=[11,11]);pad= 1.1;
@@ -670,8 +690,8 @@ lineEnd = 1.5
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("Geos-Chem_ammonia", fontsize = 20)
-plt.ylabel("Geos-Chem_ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NHx", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NHx", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -688,7 +708,7 @@ plt.text(0.75,1, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'Geos-Chem_NH3andNHxcomparisonscatter_annual_bootstrap.png',bbox_inches='tight')
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'Geos-Chem_and_DEFRANH3andNHxcomparisonscatter_annual_bootstrap.png',bbox_inches='tight')
 #plt.show()
 
 fig2 = plt.figure(facecolor='White',figsize=[15,18]);pad= 1.1;
@@ -705,8 +725,8 @@ lineEnd = 1.5
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("Geos-Chem_ammonia", fontsize = 20)
-plt.ylabel("Geos-Chem_ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NHx", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NHx", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -736,8 +756,8 @@ lineEnd = 1.5
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("Geos-Chem_ammonia", fontsize = 20)
-plt.ylabel("Geos-Chem_ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NHx", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NHx", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -767,8 +787,8 @@ lineEnd = 1.5
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("Geos-Chem_ammonia", fontsize = 20)
-plt.ylabel("Geos-Chem_ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NHx", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NHx", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -799,8 +819,8 @@ lineEnd = 1.5
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("Geos-Chem_ammonia", fontsize = 20)
-plt.ylabel("Geos-Chem_ammonium", fontsize = 20)
+plt.xlabel("GEOS-Chem NH3/NHx", fontsize = 20)
+plt.ylabel("DEFRA_NH3/NHx", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -820,6 +840,6 @@ for axis in ['top','bottom','left','right']:
 
 
 plt.subplots_adjust(left=0.05, bottom=0.07, right=0.98, top=0.97, wspace=0.20, hspace=0.05);
-plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'Geos-Chem_NH3andNHxcomparisonscatter_seasonal_bootstrap.png',bbox_inches='tight')
+plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'Geos-Chem_and DEFRA_NH3andNHxcomparisonscatter_seasonal_bootstrap.png',bbox_inches='tight')
 plt.show()
 

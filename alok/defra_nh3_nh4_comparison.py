@@ -143,11 +143,23 @@ def NH3():
 
 
 	#####Reading GEOS-Chem files ################
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 	StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
@@ -380,11 +392,21 @@ def NH4():
 	#####Reading GEOS-Chem files ################
 
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/2016/")
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+	#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+	#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+	#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+	########################### 50% increase in NH3 Emission ##################################
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 	Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/2016/")
+	os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 	Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
 
 	os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 	StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
@@ -502,8 +524,8 @@ correlate_djf = stats.pearsonr(sites_ammonia_djf[~nas_djf],sites_ammonium_djf[~n
 
 print('Correlation = ',correlate_annual)
 
-x11 = sites_ammonia_AM
-y11 = sites_ammonium_AM
+x11 = sites_ammonium_AM 
+y11 = sites_ammonia_AM
 print (x11)
 print (y11)
 x11a=np.array([x11,y11])
@@ -516,8 +538,8 @@ print (x1,'x1')
 print (y1,'y1')
 
 
-x22 = sites_ammonia_mam
-y22 = sites_ammonium_mam
+x22 = sites_ammonium_mam 
+y22 = sites_ammonia_mam
 print (x22,'x22')
 print (y22,'y22')
 x22a=np.array([x22,y22])
@@ -530,22 +552,22 @@ print (x2, 'x2')
 print (y2, 'y2')
 
 
-x33 = sites_ammonia_jja
-y33 = sites_ammonium_jja
+x33 = sites_ammonium_jja 
+y33 = sites_ammonia_jja
 x33a=np.array([x33,y33])
 x33b = x33a[:,~np.isnan(x33a).any(axis=0)]
 x3 = x33b[0]
 y3 = x33b[1]
 
-x44 = sites_ammonia_son
-y44 = sites_ammonium_son
+x44 = sites_ammonium_son 
+y44 = sites_ammonia_son
 x44a=np.array([x44,y44])
 x44b = x44a[:,~np.isnan(x44a).any(axis=0)]
 x4 = x44b[0]
 y4 = x44b[1]
 
-x55 = sites_ammonia_djf
-y55 = sites_ammonium_djf
+x55 = sites_ammonium_djf 
+y55 = sites_ammonia_djf
 x55a=np.array([x55,y55])
 x55b = x55a[:,~np.isnan(x55a).any(axis=0)]
 x5 = x55b[0]
@@ -617,8 +639,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("DEFRA_ammonia", fontsize = 20)
-plt.ylabel("DEFRA_ammonium", fontsize = 20)
+plt.xlabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.ylabel("DEFRA_ammonia ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -628,10 +650,10 @@ plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
 add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_annual[0],b=regres_annual[1],c=regres_annual[2],d=regres_annual[3]))
-plt.text(1.1,1.7,add2plt, fontsize=16,\
+plt.text(0.9,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_annual[0]*correlate_annual[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
+plt.text(0.9,1.5, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
@@ -652,8 +674,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("DEFRA_ammonia", fontsize = 20)
-plt.ylabel("DEFRA_ammonium", fontsize = 20)
+plt.xlabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.ylabel("DEFRA_ammonia ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -663,10 +685,10 @@ plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
 add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_mam[0],b=regres_mam[1],c=regres_mam[2],d=regres_mam[3]))
-plt.text(1.1,1.7,add2plt, fontsize=16,\
+plt.text(0.9,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_mam[0]*correlate_mam[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
+plt.text(0.9,1.5, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
@@ -683,8 +705,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("DEFRA_ammonia", fontsize = 20)
-plt.ylabel("DEFRA_ammonium", fontsize = 20)
+plt.xlabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.ylabel("DEFRA_ammonia ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -694,10 +716,10 @@ plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
 add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_jja[0],b=regres_jja[1],c=regres_jja[2],d=regres_jja[3]))
-plt.text(1.1,1.7,add2plt, fontsize=16,\
+plt.text(0.9,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_jja[0]*correlate_jja[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
+plt.text(0.9,1.5, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
@@ -714,8 +736,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("DEFRA_ammonia", fontsize = 20)
-plt.ylabel("DEFRA_ammonium", fontsize = 20)
+plt.xlabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.ylabel("DEFRA_ammonia ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -725,10 +747,10 @@ plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
 add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_son[0],b=regres_son[1],c=regres_son[2],d=regres_son[3]))
-plt.text(1.1,1.7,add2plt, fontsize=16,\
+plt.text(0.9,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_son[0]*correlate_son[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
+plt.text(0.9,1.5, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
@@ -746,8 +768,8 @@ lineEnd = 3
 plt.plot([lineStart, lineEnd], [lineStart, lineEnd], 'k-', color = 'c',linewidth=2)
 plt.xlim(lineStart, lineEnd)
 plt.ylim(lineStart, lineEnd)
-plt.xlabel("DEFRA_ammonia", fontsize = 20)
-plt.ylabel("DEFRA_ammonium", fontsize = 20)
+plt.xlabel("DEFRA_ammonium ($\mu$g m$^{-3}$)", fontsize = 20)
+plt.ylabel("DEFRA_ammonia ($\mu$g m$^{-3}$)", fontsize = 20)
 plt.gca().set_aspect('equal', adjustable='box')
 plt.draw()
 ax.yaxis.get_offset_text().set_size(16)
@@ -757,10 +779,10 @@ plt.xticks(fontsize = 16)
 plt.legend(('Data','RegressionLine','1:1 Line',),fontsize = 16)
 add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_djf[0],b=regres_djf[1],c=regres_djf[2],d=regres_djf[3]))
-plt.text(1.1,1.7,add2plt, fontsize=16,\
+plt.text(0.9,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_djf[0]*correlate_djf[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
+plt.text(0.9,1.5, add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)

@@ -142,14 +142,25 @@ print (sites_ammonia_AM, sites_name, sites_lat, sites_lon)
 
 #####Reading GEOS-Chem files ################
 
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+
+
+#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/AerosolMass/")
+#Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
+
+#os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+#Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
+
+
+########################### 50% increase in NH3 Emission ##################################
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/AerosolMass/2016/")
 Aerosols = sorted(glob.glob("GEOSChem.AerosolMass*nc4"))
 
-os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_naei_iccw/SpeciesConc/")
+os.chdir("/data/uptrop/Projects/DEFRA-NH3/GC/geosfp_eu_scale_nh3_emis/SpeciesConc/2016/")
 Species  = sorted(glob.glob("GEOSChem.SpeciesConc*.nc4"))
 
 os.chdir("/scratch/uptrop/ap744/GEOS-Chem_outputs/")
 StateMet = sorted(glob.glob("GEOSChem.StateMet.2016*b.nc4"))
+
 
 Species = Species[:] 
 Aerosols = Aerosols[:]
@@ -423,9 +434,9 @@ add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_annual[0],b=regres_annual[1],c=regres_annual[2],d=regres_annual[3]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
-add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_annual[0]*correlate_annual[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
-		ha='left', va='center')#, transform=ax.transAxes)
+#add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_annual[0]*correlate_annual[0]))
+#plt.text(1.1,1.6, add2plt, fontsize=16,\
+#		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
 plt.savefig('/scratch/uptrop/ap744/python_work/'+Today_date+'ammonia_GEOS-Chem_DEFRAscatter_annual_bootstrap.png',bbox_inches='tight')
@@ -458,9 +469,9 @@ add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_mam[0],b=regres_mam[1],c=regres_mam[2],d=regres_mam[3]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
-add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_mam[0]*correlate_mam[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
-		ha='left', va='center')#, transform=ax.transAxes)
+#add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_mam[0]*correlate_mam[0]))
+#plt.text(1.1,1.6, add2plt, fontsize=16,\
+#		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
   
@@ -489,9 +500,9 @@ add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_jja[0],b=regres_jja[1],c=regres_jja[2],d=regres_jja[3]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
-add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_jja[0]*correlate_jja[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
-		ha='left', va='center')#, transform=ax.transAxes)
+#add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_jja[0]*correlate_jja[0]))
+#plt.text(1.1,1.6, add2plt, fontsize=16,\
+#		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
   
@@ -520,9 +531,9 @@ add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_son[0],b=regres_son[1],c=regres_son[2],d=regres_son[3]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
-add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_son[0]*correlate_son[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
-		ha='left', va='center')#, transform=ax.transAxes)
+#add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_son[0]*correlate_son[0]))
+#plt.text(1.1,1.6, add2plt, fontsize=16,\
+#		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
 
@@ -552,9 +563,9 @@ add2plt=("y = ({a:2.2f}±{c:2.2f})x + ({b:2.2f}±{d:2.2f})".\
 		format(a=regres_djf[0],b=regres_djf[1],c=regres_djf[2],d=regres_djf[3]))
 plt.text(1.1,1.7,add2plt, fontsize=16,\
 		ha='left', va='center')#, transform=ax.transAxes)
-add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_djf[0]*correlate_djf[0]))
-plt.text(1.1,1.6, add2plt, fontsize=16,\
-		ha='left', va='center')#, transform=ax.transAxes)
+#add2plt=("R$^2$ = {a:6.2f}".format(a=correlate_djf[0]*correlate_djf[0]))
+#plt.text(1.1,1.6, add2plt, fontsize=16,\
+#		ha='left', va='center')#, transform=ax.transAxes)
 for axis in ['top','bottom','left','right']:
 		ax.spines[axis].set_linewidth(2)
 
